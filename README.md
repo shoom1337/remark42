@@ -422,9 +422,12 @@ services:
 
 #### Comments
 
-It's a main widget which renders list of comments.
+You shoul to add two parts for embed comments on a web page.
+First off all you should specify config with widgets that you want to use on a page and than add script wich will load comments.
 
+It's a main widget which renders list of comments.
 Add this snippet to the bottom of web page:
+
 
 ```html
 <script>
@@ -466,16 +469,11 @@ Add this snippet to the bottom of web page:
                                    // but your users won't have interface for subscription
   };
 </script>
-<script>
-  (function(c) {
-    for(var i = 0; i < c.length; i++){
-      var d = document, s = d.createElement('script');
-      s.src = remark_config.host + '/web/' +c[i] +'.js';
-      s.defer = true;
-      (d.head || d.body).appendChild(s);
-    }
-  })(remark_config.components || ['embed']);
-</script>
+
+```
+
+```
+<script>!function(e,n){for(var o=0;o<e.length;o++){var r=n.createElement("script"),c=".js",d=n.head||n.body;"noModule"in r?(r.type="module",c=".mjs"):r.async=!0,r.defer=!0,r.src=remark_config.host+"/web/"+e[o]+c,d.appendChild(r)}}(remark_config.components||["embed"],document);</script>
 ```
 
 And then add this node in the place where you want to see Remark42 widget:
@@ -485,28 +483,6 @@ And then add this node in the place where you want to see Remark42 widget:
 ```
 
 After that widget will be rendered inside this node.
-
-If you want to set this up on a Single Page App, see [appropriate doc page](https://remark42.com/docs/latest/spa/).
-
-##### Themes
-
-Right now Remark has two themes: light and dark.
-You can pick one using configuration object,
-but there is also a possibility to switch between themes in runtime.
-For this purpose Remark adds to `window` object named `REMARK42`,
-which contains function `changeTheme`.
-Just call this function and pass a name of the theme that you want to turn on:
-
-```js
-window.REMARK42.changeTheme('light');
-```
-
-##### Locales
-
-Right now Remark is translated to en, ru (partially), de, and fi languages.
-You can pick one using [configuration object](#setup-on-your-website).
-
-Do you want translate remark42 to other locale? Please see [this documentation](https://github.com/umputun/remark42/blob/master/docs/translation.md) for details.
 
 #### Last comments
 
@@ -521,15 +497,6 @@ Add this snippet to the bottom of web page, or adjust already present `remark_co
     site_id: 'YOUR_SITE_ID',
     components: ['last-comments']
   };
-
-  (function(c) {
-    for(var i = 0; i < c.length; i++){
-      var d = document, s = d.createElement('script');
-      s.src = remark_config.host + '/web/' +c[i] +'.js';
-      s.defer = true;
-      (d.head || d.body).appendChild(s);
-    }
-  })(remark_config.components || ['embed']);
 </script>
 ```
 
@@ -554,15 +521,6 @@ Add this snippet to the bottom of web page, or adjust already present `remark_co
     site_id: 'YOUR_SITE_ID',
     components: ['counter']
   };
-
-  (function(c) {
-    for(var i = 0; i < c.length; i++){
-      var d = document, s = d.createElement('script');
-      s.src = remark_config.host + '/web/' +c[i] +'.js';
-      s.defer = true;
-      (d.head || d.body).appendChild(s);
-    }
-  })(remark_config.components || ['embed']);
 </script>
 ```
 
@@ -571,6 +529,30 @@ And then add a node like this in the place where you want to see a number of com
 ```html
 <span class="remark42__counter" data-url="https://domain.com/path/to/article/"></span>
 ```
+
+If you want to set this up on a Single Page App, see [appropriate doc page](https://remark42.com/docs/latest/spa/).
+
+##### Themes
+
+Right now Remark has two themes: light and dark.
+You can pick one using configuration object,
+but there is also a possibility to switch between themes in runtime.
+For this purpose Remark adds to `window` object named `REMARK42`,
+which contains function `changeTheme`.
+Just call this function and pass a name of the theme that you want to turn on:
+
+```js
+window.REMARK42.changeTheme('light');
+```
+
+##### Locales
+
+Right now Remark is translated to en, ru (partially), de, and fi languages.
+You can pick one using [configuration object](#setup-on-your-website).
+
+Do you want translate remark42 to other locale? Please see [this documentation](https://github.com/umputun/remark42/blob/master/docs/translation.md) for details.
+
+
 
 You can use as many nodes like this as you need to.
 The script will found all them by the class `remark__counter`,
