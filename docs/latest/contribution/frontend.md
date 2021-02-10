@@ -1,4 +1,57 @@
-# Frontend guide
+---
+title: Frontend guide
+---
+
+# Contribution in frontend 
+- [Build](#build)
+- [Code Style](#code-style)
+- [CSS Styles](#css-styles)
+- [Imports](#imports)
+- [Testing](#testing)
+- [Locales](#how-to-add-new-locale)
+
+
+### Build
+You should have at least 2GB RAM or swap enabled for building
+
+* install [Node.js 12.11](https://nodejs.org/en/) or higher;
+* install [NPM 6.13.4](https://www.npmjs.com/package/npm);
+* run `npm install` inside `./frontend`;
+* run `npm run build` there;
+* result files will be saved in `./frontend/public`.
+
+**Note** Running `npm install` will set up precommit hooks into your git repository.
+It used to reformat your frontend code using `prettier` and lint with `eslint` and `stylelint` before every commit.
+
+### Devserver
+
+For local development mode with Hot Reloading use `npm start` instead of `npm run build`.
+In this case `webpack` will serve files using `webpack-dev-server` on `localhost:9000`.
+By visiting `127.0.0.1:9000/web` you will get a page with main comments widget
+communicating with demo server backend running on `https://demo.remark42.com`.
+But you will not be able to login with any oauth providers due to security reasons.
+
+You can attach to locally running backend by providing `REMARK_URL` environment variable.
+```sh
+npx cross-env REMARK_URL=http://127.0.0.1:8080 npm start
+```
+
+**Note** If you want to redefine env variables such as `PORT` on your local instance you can add `.env` file
+to `./frontend` folder and rewrite variables as you wish. For such functional we use `dotenv`
+
+The best way for start local developer environment:
+```sh
+cp compose-dev-frontend.yml compose-private-frontend.yml
+docker-compose -f compose-private-frontend.yml up --build
+cd frontend
+npm run dev
+```
+
+Developer build running by `webpack-dev-server` supports devtools for [React](https://github.com/facebook/react-devtools) and
+[Redux](https://github.com/zalmoxisus/redux-devtools-extension).
+
+
+
 ### Code Style
 
 - project uses typescript to statically analyze code
@@ -29,7 +82,7 @@
 
 ### How to add new locale
 
-Please see [this documentation](https://github.com/umputun/remark42/blob/master/docs/translation.md).
+Please see [this documentation](../translation.md).
 
 ### Notes
 
