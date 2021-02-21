@@ -17,8 +17,8 @@ module.exports = {
   },
   setupFiles: ['<rootDir>/jest.setup.ts'],
   setupFilesAfterEnv: [
-    'jest-localstorage-mock',
     '<rootDir>/app/__mocks__/fetch.ts',
+    '<rootDir>/app/__mocks__/localstorage.ts',
     '<rootDir>/app/__stubs__/remark-config.ts',
     '<rootDir>/app/__stubs__/static-config.ts',
   ],
