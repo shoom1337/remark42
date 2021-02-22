@@ -628,7 +628,7 @@ Frontend guide can be found here: [./frontend/Readme.md](./frontend/Readme.md)
 You should have at least 2GB RAM or swap enabled for building
 
 * install [Node.js 12.11](https://nodejs.org/en/) or higher;
-* install [NPM 6.13.4](https://www.npmjs.com/package/npm);
+* install [NPM 7.5.4](https://www.npmjs.com/package/npm);
 * run `npm install` inside `./frontend`;
 * run `npm run build` there;
 * result files will be saved in `./frontend/public`.
