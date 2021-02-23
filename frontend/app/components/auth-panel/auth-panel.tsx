@@ -3,19 +3,17 @@ import { useSelector } from 'react-redux';
 import { FormattedMessage, defineMessages, IntlShape, useIntl } from 'react-intl';
 import b from 'bem-react-helper';
 
-import { User, AuthProvider, Sorting, Theme, PostInfo } from 'common/types';
+import { User, Sorting, Theme, PostInfo } from 'common/types';
 import { IS_STORAGE_AVAILABLE, IS_THIRD_PARTY } from 'common/constants';
 import { requestDeletion } from 'utils/email';
 import postMessage from 'utils/postMessage';
 import { getHandleClickProps } from 'common/accessibility';
 import { StoreState } from 'store';
-import { ProviderState } from 'store/provider/reducers';
 import { Dropdown, DropdownItem } from 'components/dropdown';
 import { Button } from 'components/button';
 import Auth from 'components/auth';
 
 import useTheme from 'hooks/useTheme';
-import { StaticStore } from 'common/static-store';
 
 export interface OwnProps {
   user: User | null;
@@ -24,7 +22,6 @@ export interface OwnProps {
   postInfo: PostInfo;
 
   onSortChange(s: Sorting): Promise<void>;
-  onSignIn(p: AuthProvider): Promise<User | null>;
   onSignOut(): Promise<void>;
   onCommentsChangeReadOnlyMode(readOnly: boolean): Promise<void>;
   onBlockedUsersShow(): void;
@@ -34,8 +31,6 @@ export interface OwnProps {
 export interface Props extends OwnProps {
   intl: IntlShape;
   theme: Theme;
-  providers: AuthProvider['name'][];
-  provider: ProviderState;
   sort: Sorting;
 }
 
@@ -106,13 +101,13 @@ export class AuthPanel extends Component<Props, State> {
 
           {!isUserAnonymous && (
             <DropdownItem>
-              <Button theme={theme} onClick={() => requestDeletion().then(onSignOut)}>
+              <Button onClick={() => requestDeletion().then(onSignOut)}>
                 <FormattedMessage id="authPanel.request-to-delete-data" defaultMessage="Request my data removal" />
               </Button>
             </DropdownItem>
           )}
         </Dropdown>{' '}
-        <Button kind="link" theme={theme} onClick={onSignOut}>
+        <Button kind="link" onClick={onSignOut}>
           <FormattedMessage id="authPanel.logout" defaultMessage="Logout?" />
         </Button>
       </>
@@ -327,17 +322,7 @@ function getSortArray(currentSort: Sorting, intl: IntlShape) {
 export default function AuthPanelConnected(props: OwnProps) {
   const intl = useIntl();
   const theme = useTheme();
-  const provider = useSelector<StoreState, ProviderState>((state) => state.provider);
   const sort = useSelector<StoreState, Sorting>((state) => state.comments.sort);
 
-  return (
-    <AuthPanel
-      intl={intl}
-      theme={theme}
-      providers={StaticStore.config.auth_providers}
-      provider={provider}
-      sort={sort}
-      {...props}
-    />
-  );
+  return <AuthPanel intl={intl} theme={theme} sort={sort} {...props} />;
 }
