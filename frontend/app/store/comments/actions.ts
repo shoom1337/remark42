@@ -26,16 +26,21 @@ export const setComments = (comments: Node[]): StoreAction<void> => (dispatch) =
 };
 
 /** appends comment to tree */
-export const addComment = (text: string, title: string, pid?: Comment['id']): StoreAction<Promise<void>> => async (
-  dispatch
-) => {
-  const comment = await api.addComment({ text, title, pid });
+export const addComment = (
+  rating: number,
+  text: string,
+  title: string,
+  pid?: Comment['id']
+): StoreAction<Promise<void>> => async (dispatch) => {
+  const comment = await api.addComment({ rating, text, title, pid });
   dispatch({ type: COMMENTS_APPEND, pid: pid || null, comment });
 };
 
 /** edits comment in tree */
-export const updateComment = (id: Comment['id'], text: string): StoreAction<Promise<void>> => async (dispatch) => {
-  const comment = await api.updateComment({ id, text });
+export const updateComment = (id: Comment['id'], rating: number, text: string): StoreAction<Promise<void>> => async (
+  dispatch
+) => {
+  const comment = await api.updateComment({ id, rating, text });
   dispatch({ type: COMMENTS_EDIT, comment });
 };
 

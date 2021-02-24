@@ -77,10 +77,12 @@ export const putCommentVote = ({ id, value }: { id: Comment['id']; value: number
   apiFetcher.put(`/vote/${id}`, { url, vote: value });
 
 export const addComment = ({
+  rating,
   title,
   text,
   pid,
 }: {
+  rating: number;
   title: string;
   text: string;
   pid?: Comment['id'];
@@ -89,6 +91,7 @@ export const addComment = ({
     '/comment',
     {},
     {
+      rating,
       title,
       text,
       locator: { site: siteId, url },
@@ -96,8 +99,15 @@ export const addComment = ({
     }
   );
 
-export const updateComment = ({ text, id }: { text: string; id: Comment['id'] }): Promise<Comment> =>
-  apiFetcher.put(`/comment/${id}`, { url }, { text });
+export const updateComment = ({
+  rating,
+  text,
+  id,
+}: {
+  rating: number;
+  text: string;
+  id: Comment['id'];
+}): Promise<Comment> => apiFetcher.put(`/comment/${id}`, { url }, { rating, text });
 
 export const removeMyComment = (id: Comment['id']): Promise<void> =>
   apiFetcher.put(`/comment/${id}`, { url }, { delete: true });

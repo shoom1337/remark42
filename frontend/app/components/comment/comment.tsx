@@ -341,14 +341,14 @@ class Comment extends Component<CommentProps, State> {
     this.sendVotingRequest(-1, cachedScore, scoreDelta);
   };
 
-  addComment = async (text: string, title: string, pid?: CommentType['id']) => {
-    await this.props.addComment!(text, title, pid);
+  addComment = async (rating: number, text: string, title: string, pid?: CommentType['id']) => {
+    await this.props.addComment!(rating, text, title, pid);
 
     this.props.setReplyEditState!({ id: this.props.data.id, state: CommentMode.None });
   };
 
-  updateComment = async (id: CommentType['id'], text: string) => {
-    await this.props.updateComment!(id, text);
+  updateComment = async (id: CommentType['id'], rating: number, text: string) => {
+    await this.props.updateComment!(id, rating, text);
 
     this.props.setReplyEditState!({ id: this.props.data.id, state: CommentMode.None });
   };
@@ -373,9 +373,10 @@ class Comment extends Component<CommentProps, State> {
   copyComment = () => {
     const username = this.props.data.user.name;
     const time = this.props.data.time;
+    const rating = this.props.data.rating;
     const text = this.textNode.current!.textContent || '';
 
-    copy(`<b>${username}</b>&nbsp;${time}<br>${text.replace(/\n+/g, '<br>')}`);
+    copy(`<b>${username}</b>&nbsp;${time}<br>${text.replace(/\n+/g, '<br>')}rating: ${rating}`);
 
     this.setState({ isCopied: true }, () => {
       setTimeout(() => this.setState({ isCopied: false }), 3000);
@@ -553,6 +554,7 @@ class Comment extends Component<CommentProps, State> {
       controversyText: intl.formatMessage(messages.controversy, {
         value: (props.data.controversy || 0).toFixed(2),
       }),
+      rating: props.data.rating,
       text:
         props.view === 'preview'
           ? getTextSnippet(props.data.text)
@@ -613,13 +615,13 @@ class Comment extends Component<CommentProps, State> {
             )}
             <div className="comment__info">
               {!!o.title && o.user.name}
-
               {!o.title && (
                 <a href={`${o.locator.url}#${COMMENT_NODE_CLASSNAME_PREFIX}${o.id}`} className="comment__username">
                   {o.user.name}
                 </a>
               )}
             </div>{' '}
+            <div>rating: {o.rating}</div>
             <div
               className={b('comment__text', { mix: b('raw-content', {}, { theme: props.theme }) })}
               // eslint-disable-next-line react/no-danger
@@ -773,6 +775,8 @@ class Comment extends Component<CommentProps, State> {
             />
           )}
 
+          <div>rating: {o.rating}</div>
+
           {(!props.collapsed || props.view === 'pinned') && (
             <div className="comment__actions">
               {!props.data.delete && !props.isCommentsDisabled && !props.disabled && props.view === 'main' && (
@@ -836,7 +840,7 @@ class Comment extends Component<CommentProps, State> {
             theme={props.theme}
             mode="reply"
             mix="comment__input"
-            onSubmit={(text: string, title: string) => this.addComment(text, title, o.id)}
+            onSubmit={(rating: number, text: string, title: string) => this.addComment(rating, text, title, o.id)}
             onCancel={this.toggleReplying}
             getPreview={this.props.getPreview!}
             autofocus={true}
@@ -844,17 +848,17 @@ class Comment extends Component<CommentProps, State> {
             simpleView={StaticStore.config.simple_view}
           />
         )}
-
         {CommentForm && isEditing && props.view === 'main' && (
           <CommentForm
             id={o.id}
             intl={this.props.intl}
             user={props.user}
             theme={props.theme}
+            rating={o.rating}
             value={o.orig}
             mode="edit"
             mix="comment__input"
-            onSubmit={(text: string) => this.updateComment(props.data.id, text)}
+            onSubmit={(rating: number, text: string) => this.updateComment(props.data.id, rating, text)}
             onCancel={this.toggleEditing}
             getPreview={this.props.getPreview!}
             errorMessage={state.editDeadline === null ? intl.formatMessage(messages.expiredTime) : undefined}

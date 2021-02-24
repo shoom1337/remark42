@@ -13,6 +13,7 @@ import './__counter/comment-form__counter.css';
 import './__error/comment-form__error.css';
 import './__field/comment-form__field.css';
 import './__field-wrapper/comment-form__field-wrapper.css';
+import './__rating-wrapper/comment-form__rating-wrapper.css';
 import './__preview/comment-form__preview.css';
 import './__preview-wrapper/comment-form__preview-wrapper.css';
 import './__rss/comment-form__rss.css';

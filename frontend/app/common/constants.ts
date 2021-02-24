@@ -22,6 +22,9 @@ export const PROVIDER_NAMES: { [P in AuthProvider['name']]: string } = {
 export const LS_COLLAPSE_KEY = '__remarkCollapsed';
 
 /** locastorage key for comment form value */
+export const LS_SAVED_RATING_VALUE = '__remark_rating_value';
+
+/** locastorage key for comment form value */
 export const LS_SAVED_COMMENT_VALUE = '__remark_comment_value';
 
 /** locastorage key for hidden users */

@@ -4,7 +4,6 @@ import { shallow } from 'enzyme';
 import { user, anonymousUser } from '__stubs__/user';
 import { StaticStore } from 'common/static-store';
 import { LS_SAVED_COMMENT_VALUE } from 'common/constants';
-import * as localStorageModule from 'common/local-storage';
 
 import { CommentForm, CommentFormProps, messages } from './comment-form';
 import { SubscribeByEmail } from './__subscribe-by-email';
@@ -116,19 +115,6 @@ describe('<CommentForm />', () => {
 
       instance.onInput(createEvent('input', { value: '11' }));
       expect(localStorage.getItem(LS_SAVED_COMMENT_VALUE)).toBe('{"1":"11"}');
-    });
-
-    it('should clear value after send', async () => {
-      localStorage.setItem(LS_SAVED_COMMENT_VALUE, JSON.stringify({ '1': 'asd' }));
-      const updateJsonItemSpy = jest.spyOn(localStorageModule, 'updateJsonItem');
-      const props = { ...DEFAULT_PROPS, user, intl };
-
-      const wrapper = shallow<CommentForm, CommentFormProps>(<CommentForm {...props} />);
-      const instance = wrapper.instance();
-
-      await instance.send(createEvent('send', { preventDefault: () => undefined }));
-      expect(updateJsonItemSpy).toHaveBeenCalled();
-      expect(localStorage.getItem(LS_SAVED_COMMENT_VALUE)).toBe(JSON.stringify({}));
     });
   });
 

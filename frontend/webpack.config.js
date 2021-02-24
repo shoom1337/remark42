@@ -15,7 +15,7 @@ const NODE_ID = 'remark42';
 const PUBLIC_PATH = '/web';
 const PORT = process.env.PORT || 9000;
 const REMARK_API_BASE_URL = process.env.REMARK_API_BASE_URL || 'http://127.0.0.1:8080';
-const DEVSERVER_BASE_PATH = process.env.DEVSERVER_BASE_PATH || 'http://127.0.0.1:9000';
+const DEVSERVER_BASE_PATH = process.env.DEVSERVER_BASE_PATH || 'http://127.0.0.1:8090';
 const PUBLIC_FOLDER_PATH = path.resolve(__dirname, 'public');
 const CUSTOM_PROPERTIES_PATH = path.resolve(__dirname, './app/custom-properties.css');
 

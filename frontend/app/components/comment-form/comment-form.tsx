@@ -12,7 +12,7 @@ import { replaceSelection } from 'utils/replaceSelection';
 import { Button } from 'components/button';
 import Auth from 'components/auth';
 import { getJsonItem, updateJsonItem } from 'common/local-storage';
-import { LS_SAVED_COMMENT_VALUE } from 'common/constants';
+import { LS_SAVED_RATING_VALUE, LS_SAVED_COMMENT_VALUE } from 'common/constants';
 
 import { SubscribeByEmail } from './__subscribe-by-email';
 import { SubscribeByRSS } from './__subscribe-by-rss';
@@ -20,6 +20,7 @@ import { SubscribeByRSS } from './__subscribe-by-rss';
 import MarkdownToolbar from './markdown-toolbar';
 import TextareaAutosize from './textarea-autosize';
 import { TextExpander } from './text-expander';
+import Rating from './rating';
 
 let textareaId = 0;
 
@@ -27,6 +28,7 @@ export type CommentFormProps = {
   id: string;
   user: User | null;
   errorMessage?: string;
+  rating?: number;
   value?: string;
   mix?: Mix;
   mode?: 'main' | 'edit' | 'reply';
@@ -34,7 +36,7 @@ export type CommentFormProps = {
   simpleView?: boolean;
   autofocus?: boolean;
 
-  onSubmit(text: string, pageTitle: string): Promise<void>;
+  onSubmit(rating: number, text: string, pageTitle: string): Promise<void>;
   getPreview(text: string): Promise<string>;
   /** action on cancel. optional as root input has no cancel option */
   onCancel?: () => void;
@@ -50,6 +52,7 @@ export type CommentFormState = {
   /** prevents error hiding on input event */
   errorLock: boolean;
   isDisabled: boolean;
+  rating: number;
   /** main input value */
   text: string;
   /** override main button text */
@@ -99,6 +102,8 @@ export const messages = defineMessages({
 });
 
 export class CommentForm extends Component<CommentFormProps, CommentFormState> {
+  /** reference to select element */
+  selectRef = createRef<Rating>();
   /** reference to textarea element */
   textAreaRef = createRef<TextareaAutosize>();
   textareaId: string;
@@ -108,9 +113,16 @@ export class CommentForm extends Component<CommentFormProps, CommentFormState> {
     textareaId = textareaId + 1;
     this.textareaId = `textarea_${textareaId}`;
 
+    const savedRating = getJsonItem<Record<string, string>>(LS_SAVED_RATING_VALUE);
+    let rating = savedRating ? parseInt(savedRating?.[props.id], 10) : 0;
+    if (!rating) rating = 0;
+
     const savedComments = getJsonItem<Record<string, string>>(LS_SAVED_COMMENT_VALUE);
     let text = savedComments?.[props.id] ?? '';
 
+    if (props.rating) {
+      rating = props.rating;
+    }
     if (props.value) {
       text = props.value;
     }
@@ -121,6 +133,7 @@ export class CommentForm extends Component<CommentFormProps, CommentFormState> {
       errorMessage: null,
       errorLock: false,
       isDisabled: false,
+      rating,
       text,
       buttonText: null,
     };
@@ -156,6 +169,7 @@ export class CommentForm extends Component<CommentFormProps, CommentFormState> {
       nextUserId !== userId ||
       nextProps.mode !== this.props.mode ||
       nextProps.theme !== this.props.theme ||
+      nextProps.rating !== this.props.rating ||
       nextProps.value !== this.props.value ||
       nextProps.errorMessage !== this.props.errorMessage ||
       nextState !== this.state
@@ -168,6 +182,17 @@ export class CommentForm extends Component<CommentFormProps, CommentFormState> {
       this.send(e);
     }
   }
+
+  onStarred = (rating: number) => {
+    updateJsonItem(LS_SAVED_RATING_VALUE, { [this.props.id]: rating });
+
+    this.setState({
+      isErrorShown: false,
+      errorMessage: null,
+      preview: null,
+      rating,
+    });
+  };
 
   onInput = (e: Event) => {
     const { value } = e.target as HTMLInputElement;
@@ -201,7 +226,7 @@ export class CommentForm extends Component<CommentFormProps, CommentFormState> {
   }
 
   send = async (e: Event) => {
-    const { text } = this.state;
+    const { rating, text } = this.state;
 
     if (e) e.preventDefault();
 
@@ -213,13 +238,20 @@ export class CommentForm extends Component<CommentFormProps, CommentFormState> {
 
     this.setState({ isDisabled: true, isErrorShown: false, text });
     try {
-      await this.props.onSubmit(text, pageTitle || document.title);
+      await this.props.onSubmit(rating, text, pageTitle || document.title);
+
+      updateJsonItem<Record<string, string>>(LS_SAVED_RATING_VALUE, (data) => {
+        delete data[this.props.id];
+
+        return data;
+      });
+
       updateJsonItem<Record<string, string>>(LS_SAVED_COMMENT_VALUE, (data) => {
         delete data[this.props.id];
 
         return data;
       });
-      this.setState({ preview: null, text: '' });
+      this.setState({ preview: null, rating: 5, text: '' });
     } catch (e) {
       this.setState({
         isErrorShown: true,
@@ -442,7 +474,7 @@ export class CommentForm extends Component<CommentFormProps, CommentFormState> {
 
   render() {
     const { theme, mode, simpleView, mix, uploadImage, autofocus, user, intl } = this.props;
-    const { isDisabled, isErrorShown, preview, text, buttonText } = this.state;
+    const { isDisabled, isErrorShown, preview, rating, text, buttonText } = this.state;
     const charactersLeft = StaticStore.config.max_comment_size - text.length;
     const errorMessage = this.props.errorMessage || this.state.errorMessage;
     const Labels = {
@@ -467,6 +499,9 @@ export class CommentForm extends Component<CommentFormProps, CommentFormState> {
         onDragOver={this.onDragOver}
         onDrop={this.onDrop}
       >
+        <div className="comment-form__rating-wrapper">
+          <Rating onStarred={this.onStarred} savedRating={rating} />
+        </div>
         {!simpleView && (
           <div className="comment-form__control-panel">
             <MarkdownToolbar

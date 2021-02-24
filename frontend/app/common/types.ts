@@ -35,6 +35,8 @@ export interface Comment {
   id: string;
   /** parent ID */
   pid: string;
+
+  rating: number;
   /** comment text, after md processing */
   text: string;
   /** original comment text */

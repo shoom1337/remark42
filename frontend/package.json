@@ -6,7 +6,7 @@
     "build": "webpack --mode production",
     "build:analyze": "webpack --mode production --analyze",
     "start": "cross-env REMARK_API_BASE_URL=https://demo.remark42.com webpack serve --mode development",
-    "dev": "cross-env REMARK_URL=http://127.0.0.1:8080 webpack serve --mode development",
+    "dev": "cross-env webpack serve --mode development",
     "lint": "run-p lint:*",
     "test": "jest",
     "test:coverage": "jest --coverage",
