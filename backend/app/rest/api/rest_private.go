@@ -132,6 +132,7 @@ func (s *private) createCommentCtrl(w http.ResponseWriter, r *http.Request) {
 func (s *private) updateCommentCtrl(w http.ResponseWriter, r *http.Request) {
 
 	edit := struct {
+		Rating	int
 		Text    string
 		Summary string
 		Delete  bool
@@ -162,6 +163,7 @@ func (s *private) updateCommentCtrl(w http.ResponseWriter, r *http.Request) {
 	}
 
 	editReq := service.EditRequest{
+		Rating:	 edit.Rating,
 		Text:    s.commentFormatter.FormatText(edit.Text),
 		Orig:    edit.Text,
 		Summary: edit.Summary,

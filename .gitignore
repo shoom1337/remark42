@@ -16,6 +16,7 @@ debug.test
 /rest-client.env.json
 .DS_Store
 .mongo
+.removed-tests
 remark42
 /bin/
 /backend/var/

@@ -428,6 +428,7 @@ func (s *DataStore) controversy(ups, downs int) float64 {
 
 // EditRequest contains fields needed for comment update
 type EditRequest struct {
+	Rating 	int
 	Text    string
 	Orig    string
 	Summary string
@@ -463,6 +464,7 @@ func (s *DataStore) EditComment(locator store.Locator, commentID string, req Edi
 		return comment, ErrRestrictedWordsFound
 	}
 
+	comment.Rating = req.Rating
 	comment.Text = req.Text
 	comment.Orig = req.Orig
 	comment.Edit = &store.Edit{

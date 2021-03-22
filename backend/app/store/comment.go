@@ -13,6 +13,7 @@ import (
 type Comment struct {
 	ID          string                 `json:"id" bson:"_id"`
 	ParentID    string                 `json:"pid"`
+	Rating		int					   `json:"rating,omitempty"`
 	Text        string                 `json:"text"`
 	Orig        string                 `json:"orig,omitempty"`
 	User        User                   `json:"user"`
@@ -92,6 +93,7 @@ func (c *Comment) PrepareUntrusted() {
 
 // SetDeleted clears comment info, reset to deleted state. hard flag will clear all user info as well
 func (c *Comment) SetDeleted(mode DeleteMode) {
+	c.Rating = 0
 	c.Text = ""
 	c.Orig = ""
 	c.Score = 0
